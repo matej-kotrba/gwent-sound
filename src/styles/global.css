@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@layer theme {
+  :root {
+    --color-gwent-green-british-racing: #01432E;
+    --color-gwent-green-castleton: #115D3F;
+    --color-gwent-green-philippine: #038742;
+    --color-gwent-yellow-icterine: #F9F568;
+    --color-gwent-yellow-minion: #FADC4F;
+    --color-gwent-orange-gamboge: #976006;
+  }
+}
