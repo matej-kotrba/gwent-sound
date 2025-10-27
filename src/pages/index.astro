@@ -30,3 +30,51 @@ const factions: Faction[] = [
 
   </main>
 </Layout>
+
+<style is:global>
+  .faction-card.selected {
+    border-color: var(--color-gwent-yellow-minion);
+    box-shadow: 0 0 20px 5px var(--color-gwent-yellow-minion, 0.7);
+    transform: scale(1.05);
+  }
+
+  /* When a selection is made, dim the other non-selected cards */
+  .has-selection .faction-card:not(.selected) {
+    opacity: 0.5;
+    filter: grayscale(50%);
+  }
+</style>
+
+<script>
+  let player1Faction = null;
+  let player2Faction = null;
+
+  const player1Selector = document.querySelector('#player1-selector');
+  const player2Selector = document.querySelector('#player2-selector');
+
+  function handleSelection(event, playerSelector, playerNumber) {
+    const factionId = event.detail.factionId;
+    if (playerNumber === 1) {
+      player1Faction = factionId;
+    } else {
+      player2Faction = factionId;
+    }
+
+    // Add a class to the parent to indicate a selection has been made
+    playerSelector.classList.add('has-selection');
+
+    // Remove .selected from all cards in this selector
+    playerSelector.querySelectorAll('.faction-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+
+    // Add .selected to the clicked card
+    const selectedCard = event.target;
+    selectedCard.classList.add('selected');
+
+    console.log(`Player 1: ${player1Faction}, Player 2: ${player2Faction}`);
+  }
+
+  player1Selector.addEventListener('factionSelected', (e) => handleSelection(e, player1Selector, 1));
+  player2Selector.addEventListener('factionSelected', (e) => handleSelection(e, player2Selector, 2));
+</script>

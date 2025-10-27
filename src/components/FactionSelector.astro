@@ -10,7 +10,7 @@ const { factions } = Astro.props;
 
 <div class="faction-selector grid grid-cols-2 gap-4 p-4">
   {factions.map((faction) => (
-    <div class="faction-card border border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:bg-gray-700" data-faction-id={faction.id}>
+    <div class="faction-card border-2 border-transparent rounded-lg p-2 text-center cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 hover:border-[var(--color-gwent-yellow-minion)]" data-faction-id={faction.id}>
       <img src={faction.imagePath} alt={faction.name} class="w-24 h-24 mx-auto object-cover rounded-full" />
       <p class="mt-2 text-lg font-semibold">{faction.name}</p>
     </div>
