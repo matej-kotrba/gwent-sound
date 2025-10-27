@@ -1,0 +1,34 @@
+---
+import type { Faction } from "../Faction";
+
+interface Props {
+  factions: Faction[];
+}
+
+const { factions } = Astro.props;
+---
+
+<div class="faction-selector grid grid-cols-2 gap-4 p-4">
+  {factions.map((faction) => (
+    <div class="faction-card border border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:bg-gray-700" data-faction-id={faction.id}>
+      <img src={faction.imagePath} alt={faction.name} class="w-24 h-24 mx-auto object-cover rounded-full" />
+      <p class="mt-2 text-lg font-semibold">{faction.name}</p>
+    </div>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll('.faction-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const factionId = card.getAttribute('data-faction-id');
+      console.log(`Faction selected: ${factionId}`);
+      // In a later step, this will be updated to dispatch a custom event.
+      const event = new CustomEvent('factionSelected', { 
+        bubbles: true, 
+        composed: true, 
+        detail: { factionId }
+      });
+      card.dispatchEvent(event);
+    });
+  });
+</script>
