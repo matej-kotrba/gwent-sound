@@ -3,3 +3,7 @@ export type Faction = {
   name: string;
   imagePath: string;
 };
+
+export type FactionEvent = CustomEvent<{
+  factionId: string | null;
+}>;

@@ -1,33 +1,40 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import FactionSelector from "../components/FactionSelector.astro";
-import type { Faction } from "../Faction";
+import type { Faction, FactionEvent } from "../Faction";
+
+import Coin from "../components/Coin.astro";
 
 const factions: Faction[] = [
   { id: "mon", name: "Monsters", imagePath: "/content/factions/mon.png" },
   { id: "nil", name: "Nilfgaard", imagePath: "/content/factions/nil.png" },
+  { id: "nil", name: "Northern Realms", imagePath: "/content/factions/nor.png" },
   { id: "sco", name: "Scoia'tael", imagePath: "/content/factions/sco.png" },
   { id: "ske", name: "Skellige", imagePath: "/content/factions/ske.png" },
 ];
 ---
 
 <Layout>
-  <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-8">
-      Gwent Coin Toss
-    </h1>
-    
-    <div class="flex justify-between items-start gap-8">
-      <div id="player1-selector" class="w-1/2">
+  <main class="container mx-auto px-4 py-8 flex flex-col items-center">
+    <h1 class="text-4xl font-bold text-center mb-8">Gwent Coin Toss</h1>
+
+    <div class="w-full max-w-4xl flex flex-col md:flex-row justify-between items-start gap-8">
+      <div id="player1-selector" class="w-full md:w-1/2">
         <h2 class="text-2xl font-semibold text-center mb-4">Player 1</h2>
         <FactionSelector factions={factions} />
       </div>
-      <div id="player2-selector" class="w-1/2">
+      <div id="player2-selector" class="w-full md:w-1/2">
         <h2 class="text-2xl font-semibold text-center mb-4">Player 2</h2>
         <FactionSelector factions={factions} />
       </div>
     </div>
 
+    <div class="mt-12 flex flex-col items-center gap-6">
+      <Coin />
+      <button id="toss-button" class="px-8 py-3 bg-[var(--color-gwent-orange-gamboge)] text-white text-xl font-bold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:brightness-110" disabled>
+        Toss Coin
+      </button>
+    </div>
   </main>
 </Layout>
 
@@ -46,13 +53,15 @@ const factions: Faction[] = [
 </style>
 
 <script>
-  let player1Faction = null;
-  let player2Faction = null;
+  import type { FactionEvent } from "../Faction";
 
-  const player1Selector = document.querySelector('#player1-selector');
-  const player2Selector = document.querySelector('#player2-selector');
+  let player1Faction: string | null = null;
+  let player2Faction: string | null = null;
 
-  function handleSelection(event, playerSelector, playerNumber) {
+  const player1Selector: HTMLElement | null = document.querySelector("#player1-selector");
+  const player2Selector: HTMLElement | null = document.querySelector("#player2-selector");
+
+  function handleSelection(event: FactionEvent, playerSelector: HTMLElement, playerNumber: number) {
     const factionId = event.detail.factionId;
     if (playerNumber === 1) {
       player1Faction = factionId;
@@ -61,20 +70,67 @@ const factions: Faction[] = [
     }
 
     // Add a class to the parent to indicate a selection has been made
-    playerSelector.classList.add('has-selection');
+    playerSelector.classList.add("has-selection");
 
     // Remove .selected from all cards in this selector
-    playerSelector.querySelectorAll('.faction-card').forEach(card => {
-      card.classList.remove('selected');
+    playerSelector.querySelectorAll(".faction-card").forEach((card) => {
+      card.classList.remove("selected");
     });
 
     // Add .selected to the clicked card
-    const selectedCard = event.target;
-    selectedCard.classList.add('selected');
+    const selectedCard = event.target as HTMLElement;
+    if (selectedCard === null) return;
+
+    selectedCard.classList.add("selected");
 
     console.log(`Player 1: ${player1Faction}, Player 2: ${player2Faction}`);
+
+    if (player1Faction && player2Faction) {
+      tossButton.disabled = false;
+    }
   }
 
-  player1Selector.addEventListener('factionSelected', (e) => handleSelection(e, player1Selector, 1));
-  player2Selector.addEventListener('factionSelected', (e) => handleSelection(e, player2Selector, 2));
+  player1Selector?.addEventListener("factionSelected", (e) =>
+    handleSelection(e as FactionEvent, player1Selector, 1)
+  );
+  player2Selector?.addEventListener("factionSelected", (e) =>
+    handleSelection(e as FactionEvent, player2Selector, 2)
+  );
+
+  // --- Coin Toss Logic ---
+  const tossButton = document.querySelector("#toss-button") as HTMLButtonElement;
+  const coin = document.querySelector("#coin") as HTMLElement;
+
+  tossButton.addEventListener("click", () => {
+    tossButton.disabled = true;
+
+    // Reset transform to ensure animation re-triggers
+    coin.style.transitionDuration = "0s";
+    coin.style.transform = "rotateY(0deg)";
+
+    // Force reflow to apply reset immediately
+    void coin.offsetWidth;
+
+    // Spin animation
+    const spinCount = 10;
+    coin.style.transitionDuration = "3s";
+    coin.style.transform = `rotateY(${180 * spinCount}deg)`;
+
+    setTimeout(() => {
+      const winner = Math.random() < 0.5 ? player1Faction : player2Faction;
+      console.log(`The winner is: ${winner}`);
+
+      // Stop the animation on the correct side
+      const isWinnerPlayer1 = winner === player1Faction;
+      const finalRotation = isWinnerPlayer1 ? 180 * (spinCount + 1) : 180 * spinCount;
+      
+      coin.style.transitionDuration = "0.5s"; // A short transition to the final state
+      coin.style.transform = `rotateY(${finalRotation}deg)`;
+
+      // Apply the winning theme
+      document.body.classList.remove("theme-mon", "theme-nil", "theme-nor", "theme-sco", "theme-ske");
+      document.body.classList.add(`theme-${winner}`);
+
+    }, 3000);
+  });
 </script>

@@ -8,5 +8,31 @@
     --color-gwent-yellow-icterine: #F9F568;
     --color-gwent-yellow-minion: #FADC4F;
     --color-gwent-orange-gamboge: #976006;
+
+    /* Faction Theme Colors */
+    --theme-bg: var(--color-gwent-green-british-racing);
+    --theme-text: #e5e5e5; /* neutral-200 */
+    --theme-accent: var(--color-gwent-yellow-minion);
+  }
+
+  .theme-mon {
+    --theme-bg: #4c1d1d; /* red-900 */
+    --theme-accent: #ef4444; /* red-500 */
+  }
+  .theme-nil {
+    --theme-bg: #181818; /* true-gray-900 */
+    --theme-accent: #fbbF24; /* amber-400 */
+  }
+  .theme-nor {
+    --theme-bg: #1e3a8a; /* blue-900 */
+    --theme-accent: #60a5fa; /* blue-400 */
+  }
+  .theme-sco {
+    --theme-bg: #064e3b; /* green-900 */
+    --theme-accent: #34d399; /* emerald-400 */
+  }
+  .theme-ske {
+    --theme-bg: #4a044e; /* purple-900 */
+    --theme-accent: #c084fc; /* purple-400 */
   }
 }

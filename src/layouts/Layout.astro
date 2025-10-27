@@ -10,9 +10,15 @@ import "../styles/global.css";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>Astro Basics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[var(--color-gwent-green-british-racing)] text-gray-100">
-    <slot />
+  <body class="bg-[var(--theme-bg)] text-[var(--theme-text)] transition-colors duration-1000 font-['Cinzel']">
+    <div class="absolute inset-0 w-full h-full bg-[url('/assets/background.svg')] opacity-5"></div>
+    <div class="relative">
+      <slot />
+    </div>
   </body>
 </html>
 
