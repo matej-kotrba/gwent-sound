@@ -31,7 +31,11 @@ const factions: Faction[] = [
 
     <div class="mt-12 flex flex-col items-center gap-6">
       <Coin />
-      <button id="toss-button" class="px-8 py-3 bg-[var(--color-gwent-orange-gamboge)] text-white text-xl font-bold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:brightness-110" disabled>
+      <button
+        id="toss-button"
+        class="px-8 py-3 bg-[var(--color-gwent-orange-gamboge)] text-white text-xl font-bold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:brightness-110"
+        disabled
+      >
         Toss Coin
       </button>
     </div>
@@ -120,17 +124,20 @@ const factions: Faction[] = [
       const winner = Math.random() < 0.5 ? player1Faction : player2Faction;
       console.log(`The winner is: ${winner}`);
 
-      // Stop the animation on the correct side
       const isWinnerPlayer1 = winner === player1Faction;
       const finalRotation = isWinnerPlayer1 ? 180 * (spinCount + 1) : 180 * spinCount;
-      
+
       coin.style.transitionDuration = "0.5s"; // A short transition to the final state
       coin.style.transform = `rotateY(${finalRotation}deg)`;
 
-      // Apply the winning theme
-      document.body.classList.remove("theme-mon", "theme-nil", "theme-nor", "theme-sco", "theme-ske");
+      document.body.classList.remove(
+        "theme-mon",
+        "theme-nil",
+        "theme-nor",
+        "theme-sco",
+        "theme-ske"
+      );
       document.body.classList.add(`theme-${winner}`);
-
     }, 3000);
   });
 </script>
