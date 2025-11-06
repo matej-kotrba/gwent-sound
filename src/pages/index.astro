@@ -24,11 +24,11 @@ const factions: Faction[] = [
     <div class="w-full max-w-4xl flex flex-col md:flex-row justify-between items-start gap-8">
       <div id="player1-selector" class="w-full md:w-1/2">
         <h2 class="text-2xl font-semibold text-center mb-4">Player 1</h2>
-        <FactionSelector factions={factions} />
+        <FactionSelector factions={factions} id={1} />
       </div>
       <div id="player2-selector" class="w-full md:w-1/2">
         <h2 class="text-2xl font-semibold text-center mb-4">Player 2</h2>
-        <FactionSelector factions={factions} />
+        <FactionSelector factions={factions} id={2} />
       </div>
     </div>
 
@@ -75,12 +75,14 @@ const factions: Faction[] = [
   const player2Selector: HTMLElement | null = document.querySelector("#player2-selector");
 
   const coinElement = document.querySelector("#coin");
-  const player1CoinImage = coinElement?.querySelector("div:first-child img");
-  const player2CoinImage = coinElement?.querySelector("div:last-child img");
 
   function handleSelection(event: FactionEvent, playerSelector: HTMLElement, playerNumber: number) {
     const factionId = event.detail.factionId;
     const selectedFaction = factions.find((f) => f.id === factionId);
+
+    const playerCoinImages = coinElement?.querySelectorAll("img");
+    const player1CoinImage = playerCoinImages?.item(0);
+    const player2CoinImage = playerCoinImages?.item(1);
 
     if (!selectedFaction) return;
 
@@ -117,10 +119,10 @@ const factions: Faction[] = [
     }
   }
 
-  player1Selector?.addEventListener("factionSelected", (e) =>
+  player1Selector?.addEventListener("factionSelected-1", (e) =>
     handleSelection(e as FactionEvent, player1Selector, 1)
   );
-  player2Selector?.addEventListener("factionSelected", (e) =>
+  player2Selector?.addEventListener("factionSelected-2", (e) =>
     handleSelection(e as FactionEvent, player2Selector, 2)
   );
 
