@@ -8,14 +8,17 @@ import Coin from "../components/Coin.astro";
 const factions: Faction[] = [
   { id: "mon", name: "Monsters", imagePath: "/content/factions/mon.png" },
   { id: "nil", name: "Nilfgaard", imagePath: "/content/factions/nil.png" },
-  { id: "nil", name: "Northern Realms", imagePath: "/content/factions/nor.png" },
+  { id: "nor", name: "Northern Realms", imagePath: "/content/factions/nor.png" },
   { id: "sco", name: "Scoia'tael", imagePath: "/content/factions/sco.png" },
   { id: "ske", name: "Skellige", imagePath: "/content/factions/ske.png" },
 ];
 ---
 
 <Layout>
-  <main class="container mx-auto px-4 py-8 flex flex-col items-center">
+  <main
+    class="container mx-auto px-4 py-8 flex flex-col items-center"
+    data-factions={JSON.stringify(factions)}
+  >
     <h1 class="text-4xl font-bold text-center mb-8">Gwent Coin Toss</h1>
 
     <div class="w-full max-w-4xl flex flex-col md:flex-row justify-between items-start gap-8">
@@ -30,7 +33,10 @@ const factions: Faction[] = [
     </div>
 
     <div class="mt-12 flex flex-col items-center gap-6">
-      <Coin />
+      <Coin
+        player1FactionImagePath={factions[0].imagePath}
+        player2FactionImagePath={factions[1].imagePath}
+      />
       <button
         id="toss-button"
         class="px-8 py-3 bg-[var(--color-gwent-orange-gamboge)] text-white text-xl font-bold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:brightness-110"
@@ -57,7 +63,10 @@ const factions: Faction[] = [
 </style>
 
 <script>
-  import type { FactionEvent } from "../Faction";
+  import type { Faction, FactionEvent } from "../Faction";
+
+  const mainElement = document.querySelector("main");
+  const factions: Faction[] = JSON.parse(mainElement?.dataset.factions || "[]");
 
   let player1Faction: string | null = null;
   let player2Faction: string | null = null;
@@ -65,12 +74,26 @@ const factions: Faction[] = [
   const player1Selector: HTMLElement | null = document.querySelector("#player1-selector");
   const player2Selector: HTMLElement | null = document.querySelector("#player2-selector");
 
+  const coinElement = document.querySelector("#coin");
+  const player1CoinImage = coinElement?.querySelector("div:first-child img");
+  const player2CoinImage = coinElement?.querySelector("div:last-child img");
+
   function handleSelection(event: FactionEvent, playerSelector: HTMLElement, playerNumber: number) {
     const factionId = event.detail.factionId;
+    const selectedFaction = factions.find((f) => f.id === factionId);
+
+    if (!selectedFaction) return;
+
     if (playerNumber === 1) {
       player1Faction = factionId;
+      if (player1CoinImage) {
+        (player1CoinImage as HTMLImageElement).src = selectedFaction.imagePath;
+      }
     } else {
       player2Faction = factionId;
+      if (player2CoinImage) {
+        (player2CoinImage as HTMLImageElement).src = selectedFaction.imagePath;
+      }
     }
 
     // Add a class to the parent to indicate a selection has been made
@@ -125,7 +148,7 @@ const factions: Faction[] = [
       console.log(`The winner is: ${winner}`);
 
       const isWinnerPlayer1 = winner === player1Faction;
-      const finalRotation = isWinnerPlayer1 ? 180 * (spinCount + 1) : 180 * spinCount;
+      const finalRotation = isWinnerPlayer1 ? 180 * spinCount : 180 * (spinCount + 1);
 
       coin.style.transitionDuration = "0.5s"; // A short transition to the final state
       coin.style.transform = `rotateY(${finalRotation}deg)`;
